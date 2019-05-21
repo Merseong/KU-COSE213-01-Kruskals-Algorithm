@@ -42,11 +42,12 @@ void VisitAll()
     for (int i = 0; i < dataStarter.length; i++)
     {
         int next = dataStarter[i];
-        while (1)
+
+        while (dataStarter[i] >= 0)
         {
             if (next < 0) break;
-            Visit(i, next);
-            next = visit[i][next];
+            visit(i, next);
+            next = graph->edges[i][next];
         }
     }
 }
@@ -66,7 +67,7 @@ void SetValue(int x, int y)
     }
     else if (dataStarter[x] > y) // when have smallest col
     {
-        data[x][y] = data[x][dataStarter[x]];
+        data[x][y] = dataStarter[x];
         dataStarter[x] = y;
     }
     else // when have middle or biggest col

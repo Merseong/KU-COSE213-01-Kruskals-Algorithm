@@ -12,9 +12,15 @@ typedef struct _Graph {
 	int** weight;
 } Graph;
 
+// Basic Graph Functions
 Graph* InitGraph();
 int AddWeightedEdge(Graph* graph, int from, int to, int weight);
 void PrintGraph(Graph* graph);
+
+// To Extend Boolean Array
+void SetValue(Graph* graph, int x, int y);
+
+void TPrintGraph(Graph* graph);
 
 int main()
 {
@@ -30,7 +36,7 @@ int main()
 	}
 
 	// Get weighted edges
-	printf("Type weighted edge,\nschema: (int from) (int to) (int weight)\nweight is non-zero\n");
+	printf("Type weighted edge,\nschema: (int from) (int to) (int weight)\n");
 	for (int i = 0; i < currentGraph->edgeSize; i++)
 	{
 		int from, to, weight;
@@ -42,6 +48,35 @@ int main()
 	PrintGraph(currentGraph);
 
 	return 0;
+}
+
+void TPrintGraph(Graph* graph)
+{
+	//for (int i = 0; i < graph->verticeSize; i++)
+	//{
+	//	if (graph->edgeStart[i] >= 0)
+	//	{
+	//		int next = graph->edgeStart[i];
+
+	//		while (next >= 0)
+	//		{
+	//			printf("%d %d %d\n", i, next, graph->edges[i][next]);
+	//		}
+	//	}
+	//}
+	//printf("\n\n\n");
+	for (int i = 0; i < graph->verticeSize; i++)
+	{
+		for (int j = 0; j < graph->verticeSize; j++)
+		{
+			printf(" %d ", graph->edges[i][j]);
+		}
+		printf("\n");
+	}
+	for (int i = 0; i < graph->verticeSize; i++)
+	{
+		printf(" %d ", graph->edgeStart[i]);
+	}
 }
 
 // Create size*size matrix to show edge of matrix and its cost.
@@ -60,6 +95,7 @@ Graph* InitGraph()
 	}
 	output->verticeSize = size;
 	output->edgeStart = (int*)calloc(size, sizeof(int));
+	for (int i = 0; i < size; i++) output->edgeStart[i] = -1;
 
 	// Make adjacency matrix
 	output->edges = (int**)malloc(sizeof(int*) * size);
@@ -105,9 +141,9 @@ int AddWeightedEdge(Graph* graph, int from, int to, int weight)
 		return 1;
 	}
 	
-	graph->edges[from][to] = -1;
+	SetValue(graph, from, to);
 	graph->weight[from][to] = weight;
-	graph->edges[to][from] = -1;
+	SetValue(graph, to, from);
 	graph->weight[to][from] = weight;
 	return 0;
 }
@@ -118,12 +154,58 @@ void PrintGraph(Graph* graph)
 	printf("\n 旨  vertexSize: %d, (node 0 to node %d)\n", graph->verticeSize, graph->verticeSize - 1);
 	printf(" 朵  edgeSize: %d\n 朵  list of edges with weight\n", graph->edgeSize);
 	printf(" 朵式式  | from |  to  |weight|\n");
+
 	for (int i = 0; i < graph->verticeSize; i++)
 	{
-		for (int j = i + 1; j < graph->verticeSize; j++)
+		int next = graph->edgeStart[i];
+		while (next >= 0 && next < i) next = graph->edges[i][next];
+
+		while (graph->edgeStart[i] >= 0)
 		{
-			if (graph->edges[i][j]) printf(" 朵式式  |%6d|%6d|%6d|\n", i, j, graph->weight[i][j]);
+			if (next < 0) break;
+			printf(" 朵式式  |%6d|%6d|%6d|\n", i, next, graph->weight[i][next]);
+			next = graph->edges[i][next];
 		}
 	}
 	printf(" 曲收收收收收收收收收收收收收收收收收收收收收收收收收收收");
+}
+
+void SetValue(Graph* graph, int x, int y)
+{
+	if (graph->edges[x][y])
+	{
+		printf("[CAUTION] Already true.\n");
+		return;
+	}
+
+	if (graph->edgeStart[x] < 0) // when first value in row
+	{
+		graph->edgeStart[x] = y;
+		graph->edges[x][y] = -1;
+	}
+	else if (graph->edgeStart[x] > y) // when have smallest col
+	{
+		graph->edges[x][y] = graph->edgeStart[x];
+		graph->edgeStart[x] = y;
+	}
+	else // when have middle or biggest col
+	{
+		int next = graph->edgeStart[x];
+		int prevCol = -1;
+		while (next > 0)
+		{
+			if (next > y)
+			{
+				break;
+			}
+			else
+			{
+				prevCol = next;
+				next = graph->edges[x][next];
+			}
+		}
+		graph->edges[x][prevCol] = y;
+		graph->edges[x][y] = next;
+	}
+	return;
 }
