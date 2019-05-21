@@ -7,6 +7,7 @@
 typedef struct _Graph {
 	int verticeSize;
 	int edgeSize;
+	int* edgeStart;
 	int** edges;
 	int** weight;
 } Graph;
@@ -58,6 +59,7 @@ Graph* InitGraph()
 		if (!(size > MAX_VERTICES) && !(size < 1)) break;
 	}
 	output->verticeSize = size;
+	output->edgeStart = (int*)calloc(size, sizeof(int));
 
 	// Make adjacency matrix
 	output->edges = (int**)malloc(sizeof(int*) * size);
@@ -103,9 +105,9 @@ int AddWeightedEdge(Graph* graph, int from, int to, int weight)
 		return 1;
 	}
 	
-	graph->edges[from][to] = 1;
+	graph->edges[from][to] = -1;
 	graph->weight[from][to] = weight;
-	graph->edges[to][from] = 1;
+	graph->edges[to][from] = -1;
 	graph->weight[to][from] = weight;
 	return 0;
 }
