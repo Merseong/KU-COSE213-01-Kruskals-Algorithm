@@ -37,6 +37,9 @@ int main()
 		if (AddWeightedEdge(currentGraph, from, to, weight)) i--;
 	}
 
+	// Print currntGraph
+	PrintGraph(currentGraph);
+
 	return 0;
 }
 
@@ -105,4 +108,20 @@ int AddWeightedEdge(Graph* graph, int from, int to, int weight)
 	graph->edges[to][from] = 1;
 	graph->weight[to][from] = weight;
 	return 0;
+}
+
+// Prints graph.
+void PrintGraph(Graph* graph)
+{
+	printf("\n 旨  vertexSize: %d, (node 0 to node %d)\n", graph->verticeSize, graph->verticeSize - 1);
+	printf(" 朵  edgeSize: %d\n 朵  list of edges with weight\n", graph->edgeSize);
+	printf(" 朵式式  | from |  to  |weight|\n");
+	for (int i = 0; i < graph->verticeSize; i++)
+	{
+		for (int j = i + 1; j < graph->verticeSize; j++)
+		{
+			if (graph->edges[i][j]) printf(" 朵式式  |%6d|%6d|%6d|\n", i, j, graph->weight[i][j]);
+		}
+	}
+	printf(" 曲收收收收收收收收收收收收收收收收收收收收收收收收收收收");
 }
