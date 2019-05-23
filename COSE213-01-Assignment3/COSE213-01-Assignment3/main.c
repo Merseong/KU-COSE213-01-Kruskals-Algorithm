@@ -85,6 +85,7 @@ int main()
 	for (int i = 0; i < graph->edgeCount; i++) free(graph->edges[i]);
 	free(graph->edges);
 	free(graph);
+	free(spanning);
 	return 0;
 }
 
@@ -114,6 +115,7 @@ int* Kruskal(Graph* graph)
 {
 	int spanSize = graph->nodeCount - 1;
 	int* output = (int*)malloc(sizeof(int) * spanSize);
+	for (int i = 0; i < spanSize; i++) output[i] = -1;
 	int* parentCheck = (int*)malloc(sizeof(int) * spanSize);
 	for (int i = 0; i < spanSize; i++) parentCheck[i] = i;
 	int* validCheck = (int*)calloc(graph->nodeCount, sizeof(int));
@@ -145,10 +147,6 @@ int* Kruskal(Graph* graph)
 			break;
 		}
 	}
-
-	free(output);
-	free(parentCheck);
-	free(validCheck);
 
 	if (valid) return output;
 	else return NULL;
