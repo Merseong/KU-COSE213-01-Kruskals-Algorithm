@@ -14,7 +14,7 @@ typedef struct _Graph {
 	int nodeCount; // number of node
 } Graph;
 
-void Kruskal(Graph* graph);
+int* Kruskal(Graph* graph);
 int Find(int spanning[], int node);
 void Union(int spanning[], int c1, int c2, int count);
 void PutIn(Graph* graph, int from, int to, int cost, int index);
@@ -50,19 +50,29 @@ int main()
 	{
 		int from, to, cost;
 		scanf("%d %d %d", &from, &to, &cost);
-		if (from == to || from < 0 || to < 0)
+		if (from == to || from < 0 || to < 0 || from >= graph->nodeCount || to >= graph->nodeCount)
 		{
-			printf("[ERROR] invalid input");
+			printf("[ERROR] invalid input\n");
 			i--;
 			continue;
 		}
+		int sameCheck = 0;
+		for (int j = 0; j < i; j++)
+		{
+			if (graph->edges[j]->u == from < to ? from : to && graph->edges[j]->v == from < to ? to : from)
+			{
+				printf("[ERROR] invalid input\n");
+				i--;
+				sameCheck = 1;
+				break;
+			}
+		}
+		if (sameCheck) continue;
 		graph->edges[i] = (Edge*)malloc(sizeof(Edge));
 		PutIn(graph, from, to, cost, i);
 	}
 
-	Sort(graph->edges, 0, graph->edgeCount - 1);
-
-	//Kruskal(graph);
+	int* spanning = Kruskal(graph);
 	//Print(graph);
 
 	for (int i = 0; i < graph->edgeCount; i++) free(graph->edges[i]);
@@ -71,14 +81,36 @@ int main()
 	return 0;
 }
 
-void Kruskal(Graph* graph)
+int* Kruskal(Graph* graph)
 {
+	int spanSize = graph->nodeCount - 1;
+	int* output = (int*)malloc(sizeof(int) * spanSize);
+	int* parentCheck = (int*)malloc(sizeof(int) * spanSize);
 
+	Sort(graph->edges, 0, spanSize);
+
+	for (int i = 0; i < spanSize; i++) parentCheck[i] = i;
+	output[0] = 0;
+	parentCheck[0] = graph->edges[0]->u;
+
+	int index = 1;
+	for (int i = 1; i < graph->edgeCount; i++)
+	{
+		int parent1 = Find(parentCheck, graph->edges[i]->u);
+		int parent2 = Find(parentCheck, graph->edges[i]->v);
+
+		if (parent1 != parent2)
+		{
+			output[index++] = i;
+			Union(parentCheck, parent1, parent2, spanSize);
+		}
+	}
+	return output;
 }
 
 int Find(int spanning[], int node)
 {
-	return(spanning[node]);
+	return (spanning[node]);
 }
 
 void Union(int spanning[], int c1, int c2, int count)
