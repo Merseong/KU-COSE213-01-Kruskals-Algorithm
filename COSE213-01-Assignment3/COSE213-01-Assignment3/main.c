@@ -86,6 +86,7 @@ int main()
 	free(graph->edges);
 	free(graph);
 	free(spanning);
+	getch();
 	return 0;
 }
 
