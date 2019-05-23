@@ -25,6 +25,9 @@ void Print(Graph* graph, int* spanning);
 
 int main()
 {
+	printf("\nKU Data Structure (2019-1) - Assignment #3, Kruskal's Algorithm\n");
+	printf("2018320205 �Ŵ뼺\n\n");
+
 	Graph* graph = (Graph*)malloc(sizeof(Graph));
 
 	// Get size of nodes
