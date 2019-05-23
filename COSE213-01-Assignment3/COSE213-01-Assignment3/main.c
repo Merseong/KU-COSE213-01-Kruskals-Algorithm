@@ -20,6 +20,7 @@ void Union(int spanning[], int c1, int c2, int count);
 void PutIn(Graph* graph, int from, int to, int cost, int index);
 void Sort(Edge** edges, int start, int end);
 void Swap(Edge** edges, int l, int r);
+void Print(Graph* graph, int* spanning);
 
 int main()
 {
@@ -59,7 +60,7 @@ int main()
 		int sameCheck = 0;
 		for (int j = 0; j < i; j++)
 		{
-			if (graph->edges[j]->u == from < to ? from : to && graph->edges[j]->v == from < to ? to : from)
+			if ((graph->edges[j]->u == (from < to ? from : to)) && (graph->edges[j]->v == (from < to ? to : from)))
 			{
 				printf("[ERROR] invalid input\n");
 				i--;
@@ -73,7 +74,7 @@ int main()
 	}
 
 	int* spanning = Kruskal(graph);
-	//Print(graph);
+	Print(graph, spanning);
 
 	for (int i = 0; i < graph->edgeCount; i++) free(graph->edges[i]);
 	free(graph->edges);
@@ -81,20 +82,30 @@ int main()
 	return 0;
 }
 
+void Print(Graph* graph, int* spanning)
+{
+	int costSum = 0;
+
+	printf("\nUsed Edge in Kruskal Spanning Graph: \n");
+	for (int i = 0; i < graph->nodeCount - 1; i++)
+	{
+		printf("%d %d %d\n", graph->edges[spanning[i]]->u, graph->edges[spanning[i]]->v, graph->edges[spanning[i]]->cost);
+		costSum += graph->edges[spanning[i]]->cost;
+	}
+	printf("\nTotal Cost Sum: %d\n", costSum);
+}
+
 int* Kruskal(Graph* graph)
 {
 	int spanSize = graph->nodeCount - 1;
 	int* output = (int*)malloc(sizeof(int) * spanSize);
 	int* parentCheck = (int*)malloc(sizeof(int) * spanSize);
-
-	Sort(graph->edges, 0, spanSize);
-
 	for (int i = 0; i < spanSize; i++) parentCheck[i] = i;
-	output[0] = 0;
-	parentCheck[0] = graph->edges[0]->u;
 
-	int index = 1;
-	for (int i = 1; i < graph->edgeCount; i++)
+	Sort(graph->edges, 0, graph->edgeCount - 1);
+
+	int index = 0;
+	for (int i = 0; i < graph->edgeCount; i++)
 	{
 		int parent1 = Find(parentCheck, graph->edges[i]->u);
 		int parent2 = Find(parentCheck, graph->edges[i]->v);
@@ -102,7 +113,7 @@ int* Kruskal(Graph* graph)
 		if (parent1 != parent2)
 		{
 			output[index++] = i;
-			Union(parentCheck, parent1, parent2, spanSize);
+			Union(parentCheck, parent1, parent2, graph->nodeCount);
 		}
 	}
 	return output;
