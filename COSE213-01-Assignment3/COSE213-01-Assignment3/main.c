@@ -14,6 +14,7 @@ typedef struct _Graph {
 	int nodeCount; // number of node
 } Graph;
 
+// Used functions
 int* Kruskal(Graph* graph);
 int Find(int spanning[], int node);
 void Union(int spanning[], int c1, int c2, int count);
@@ -26,8 +27,9 @@ int main()
 {
 	Graph* graph = (Graph*)malloc(sizeof(Graph));
 
+	// Get size of nodes
 	int temp;
-	printf("Enter the size of vertices (maximum 100): ");
+	printf("Enter the size of vertices (maximum %d): ", MAX_VERTICES);
 	while (1)             
 	{
 		scanf("%d", &temp);
@@ -35,17 +37,18 @@ int main()
 	}
 	graph->nodeCount = temp;
 
-	int minEdge = temp - 1;
+	// Get size of edges
 	int maxEdge = temp * (temp - 1) / 2;
-	printf("Enter the size of edges (minimum %d, maximum %d): ", minEdge, maxEdge);
+	printf("Enter the size of edges (maximum %d): ", maxEdge);
 	while (1)
 	{
 		scanf("%d", &temp);
-		if (temp <= maxEdge && temp >= minEdge) break;
+		if (temp <= maxEdge) break;
 	}
 	graph->edgeCount = temp;
 	graph->edges = (Edge**)malloc(sizeof(Edge*) * graph->edgeCount);
 
+	// Get edges
 	printf("Enter the edges (from to cost)\n");
 	for (int i = 0; i < graph->edgeCount; i++)
 	{
@@ -84,15 +87,22 @@ int main()
 
 void Print(Graph* graph, int* spanning)
 {
-	int costSum = 0;
-
-	printf("\nUsed Edge in Kruskal Spanning Graph: \n");
-	for (int i = 0; i < graph->nodeCount - 1; i++)
+	if (spanning != NULL)
 	{
-		printf("%d %d %d\n", graph->edges[spanning[i]]->u, graph->edges[spanning[i]]->v, graph->edges[spanning[i]]->cost);
-		costSum += graph->edges[spanning[i]]->cost;
+		int costSum = 0;
+
+		printf("\nUsed Edge in Kruskal Spanning Graph: \n");
+		for (int i = 0; i < graph->nodeCount - 1; i++)
+		{
+			printf("%d %d %d\n", graph->edges[spanning[i]]->u, graph->edges[spanning[i]]->v, graph->edges[spanning[i]]->cost);
+			costSum += graph->edges[spanning[i]]->cost;
+		}
+		printf("\nTotal Cost Sum: %d\n", costSum);
 	}
-	printf("\nTotal Cost Sum: %d\n", costSum);
+	else
+	{
+		printf("\nThis Graph do not have Spanning Graph with Kruskal's Algorithm.");
+	}
 }
 
 int* Kruskal(Graph* graph)
@@ -101,6 +111,7 @@ int* Kruskal(Graph* graph)
 	int* output = (int*)malloc(sizeof(int) * spanSize);
 	int* parentCheck = (int*)malloc(sizeof(int) * spanSize);
 	for (int i = 0; i < spanSize; i++) parentCheck[i] = i;
+	int* validCheck = (int*)calloc(graph->nodeCount, sizeof(int));
 
 	Sort(graph->edges, 0, graph->edgeCount - 1);
 
@@ -114,9 +125,26 @@ int* Kruskal(Graph* graph)
 		{
 			output[index++] = i;
 			Union(parentCheck, parent1, parent2, graph->nodeCount);
+			validCheck[graph->edges[i]->u] = 1;
+			validCheck[graph->edges[i]->v] = 1;
 		}
 	}
-	return output;
+	int valid = 1;
+	for (int i = 0; i < graph->nodeCount; i++)
+	{
+		if (!validCheck[i])
+		{
+			valid = 0;
+			break;
+		}
+	}
+
+	free(output);
+	free(parentCheck);
+	free(validCheck);
+
+	if (valid) return output;
+	else return NULL;
 }
 
 int Find(int spanning[], int node)
