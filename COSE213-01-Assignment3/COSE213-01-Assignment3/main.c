@@ -85,6 +85,7 @@ int main()
 	return 0;
 }
 
+// Prints spanning graph
 void Print(Graph* graph, int* spanning)
 {
 	if (spanning != NULL)
@@ -105,6 +106,7 @@ void Print(Graph* graph, int* spanning)
 	}
 }
 
+// Perform Kruskal's Algorithm, and check validity of spanning graph.
 int* Kruskal(Graph* graph)
 {
 	int spanSize = graph->nodeCount - 1;
@@ -115,6 +117,7 @@ int* Kruskal(Graph* graph)
 
 	Sort(graph->edges, 0, graph->edgeCount - 1);
 
+	// Check is there will make loop
 	int index = 0;
 	for (int i = 0; i < graph->edgeCount; i++)
 	{
@@ -129,6 +132,7 @@ int* Kruskal(Graph* graph)
 			validCheck[graph->edges[i]->v] = 1;
 		}
 	}
+	// check validity
 	int valid = 1;
 	for (int i = 0; i < graph->nodeCount; i++)
 	{
@@ -147,17 +151,20 @@ int* Kruskal(Graph* graph)
 	else return NULL;
 }
 
+// Find its parent.
 int Find(int spanning[], int node)
 {
 	return (spanning[node]);
 }
 
+// Change top parent.
 void Union(int spanning[], int c1, int c2, int count)
 {
 	for (int i = 0; i < count; i++)
 		if (spanning[i] == c2) spanning[i] = c1;
 }
 
+// Put input edge to graph.
 void PutIn(Graph* graph, int u, int v, int cost, int index)
 {
 	graph->edges[index]->u = u < v ? u : v;
@@ -165,6 +172,7 @@ void PutIn(Graph* graph, int u, int v, int cost, int index)
 	graph->edges[index]->cost = cost;
 }
 
+// Use quick sort.
 void Sort(Edge** edges, int start, int end)
 {
 	int mid = (start + end) / 2;
@@ -189,6 +197,7 @@ void Sort(Edge** edges, int start, int end)
 		Sort(edges, L, end);
 }
 
+// Swap index of edges[l] and edges[r].
 void Swap(Edge** edges, int l, int r)
 {
 	Edge* temp = edges[l];
